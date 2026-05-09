@@ -1,0 +1,10 @@
+/home/ubuntu/library-management-system/src/main/java/com/example/library/controller/BookRestController.java
+/home/ubuntu/library-management-system/src/main/java/com/example/library/model/Book.java
+/home/ubuntu/library-management-system/src/main/java/com/example/library/config/SecurityConfig.java
+/home/ubuntu/library-management-system/src/main/java/com/example/library/service/BookService.java
+/home/ubuntu/library-management-system/src/main/java/com/example/library/service/BookServiceImpl.java
+/home/ubuntu/library-management-system/src/main/java/com/example/library/LibraryManagementSystemApplication.java
+/home/ubuntu/library-management-system/src/main/java/com/example/library/exception/GlobalExceptionHandler.java
+/home/ubuntu/library-management-system/src/main/java/com/example/library/exception/ResourceNotFoundException.java
+/home/ubuntu/library-management-system/src/main/java/com/example/library/controller/BookWebController.java
+/home/ubuntu/library-management-system/src/main/java/com/example/library/repository/BookRepository.java

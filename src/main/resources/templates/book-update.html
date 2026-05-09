@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Update Book')}"></head>
+<body>
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <main class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h3>Update Book</h3>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/books/update/{id}(id=${book.id})}" th:object="${book}" method="post">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Title</label>
+                                <input type="text" th:field="*{title}" class="form-control" id="title">
+                                <div class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="author" class="form-label">Author</label>
+                                <input type="text" th:field="*{author}" class="form-control" id="author">
+                                <div class="text-danger" th:if="${#fields.hasErrors('author')}" th:errors="*{author}"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="isbn" class="form-label">ISBN</label>
+                                <input type="text" th:field="*{isbn}" class="form-control" id="isbn">
+                                <div class="text-danger" th:if="${#fields.hasErrors('isbn')}" th:errors="*{isbn}"></div>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">Update Book</button>
+                                <a th:href="@{/books}" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>
