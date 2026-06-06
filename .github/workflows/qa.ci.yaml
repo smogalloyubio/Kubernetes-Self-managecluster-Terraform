@@ -402,7 +402,54 @@ jobs:
       - name: "Example show SonarQube Quality Gate Status value"
         run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
 
-       
+  build-backend:
+    name: Build Java Backend artifact
+    needs: [sonarqube] 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout teh source code 
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build Production JAR
+        run: |
+          cd ./backend
+          mvn clean package -DskipTests 
+   
+
+      - name: Upload Backend Jar Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-production-jar
+          path: backend/target/*.jar
+          if-no-files-found: error    
+
+  build-frontend:
+    name: Build Frontend Artifact Bundle
+    needs: [sonarqube] 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bundle Frontend Assets
+        run: |
+          mkdir -p dist
+          cp ./frontend/index.html ./dist/
+          cp ./frontend/app.js ./dist/
+          cp ./frontend/nginx.conf ./dist/
+
+      - name: Upload Frontend Bundle Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-production-bundle
+          path: dist/
+          if-no-files-found: error
              
 
        
