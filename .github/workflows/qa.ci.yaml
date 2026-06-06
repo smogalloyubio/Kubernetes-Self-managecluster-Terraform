@@ -124,6 +124,91 @@ jobs:
           name: checkov-backend-report
           path: ${{ github.workspace }}/checkov-backend-report.json
           if-no-files-found: error
+
+  trivy-backend-scan:
+    name: Trivy  Backend Scan
+    needs: [gitleak-scan]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy on Java Backend
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: './backend' 
+          format: 'json'
+          output: 'trivy-backend-report.json'
+          exit-code: '0'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Run Trivy on  backendtable
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: './backend' 
+          format: 'table'
+          output: 'trivy-backendtable-report.json'
+          exit-code: '0'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Backend Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-backend-security-report
+          path: ${{ github.workspace }}/trivy-backend-report.json
+          if-no-files-found: error
+
+      - name: Upload Backend table Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-backendtable-security-report
+          path: ${{ github.workspace }}/trivy-backendtable-report.json
+          if-no-files-found: error
+
+  trivy-frontend-scan:
+    name: Trivy Nginx Frontend Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy on Nginx Frontend
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: 'fs'
+          scan-ref: './frontend' 
+          format: 'json'
+          output: 'trivy-frontend-report.json'
+          exit-code: '0'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Run Trivy on Nginx Frontend table format 
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: 'fs'
+          scan-ref: './frontend' 
+          format: 'table'
+          output: 'trivy-frontendtable-report.json'
+          exit-code: '0'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Frontend Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-frontend-security-report
+          path: ${{ github.workspace }}/trivy-frontend-report.json
+          if-no-files-found: error 
+
+      - name: Upload Frontend Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-frontendtable-security-report
+          path: ${{ github.workspace }}/trivy-frontendtable-report.json
+          if-no-files-found: error 
+       
+       
              
 
        
