@@ -343,6 +343,11 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.projectKey=smogalloyubio_Openshift-Helm-project
+            -Dsonar.organization=smogalloyubio
+            -Dsonar.sources=.
        
        
              
