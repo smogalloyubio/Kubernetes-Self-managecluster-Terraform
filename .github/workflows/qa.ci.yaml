@@ -525,6 +525,14 @@ jobs:
           output-file: frontend-image-sbom.spdx.json
           upload-artifact: true
 
+      - name: Push
+        uses: docker/build-push-action@v7
+        with:
+          push: true
+          tags: |
+            rukevweubio/frontend-book-app:${{ github.sha }}
+            rukevweubio/frontend-book-app:latest
+
 
   docker-build-backend:
     name: Build Docker image for backend
@@ -600,7 +608,7 @@ jobs:
           format: spdx-json
           output-file: backend-image-sbom.spdx.json
           upload-artifact: true
-          
+
       - name: Push
         uses: docker/build-push-action@v7
         with:
@@ -608,5 +616,4 @@ jobs:
           tags: |
             rukevweubio/backend-book-app:${{ github.sha }}
             rukevweubio/backend-book-app:latest
-            rukevweubio/frontend-book-app:${{ github.sha }}
-            rukevweubio/frontend-book-app:latest
+            
