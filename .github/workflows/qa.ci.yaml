@@ -1,4 +1,4 @@
-name: Build gitaction workflow that deploy docker image to kubernestes 
+name: Build gitaction workflow that deploy docker image to kubernestes  and google cloud 
 
 on:
   push:
