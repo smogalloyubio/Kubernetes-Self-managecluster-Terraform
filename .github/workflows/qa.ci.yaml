@@ -257,9 +257,6 @@ jobs:
       - trivy-backend-scan
       - trivy-frontend-scan
     runs-on: ubuntu-latest
-    default:
-      run:
-        working-directory: ./frontend
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -286,9 +283,6 @@ jobs:
     name: Test Java Backend
     needs: [lint-backend] 
     runs-on: ubuntu-latest
-    default:
-      run:
-        working-directory: ./backend 
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
