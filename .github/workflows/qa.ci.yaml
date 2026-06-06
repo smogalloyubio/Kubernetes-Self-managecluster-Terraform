@@ -491,6 +491,13 @@ jobs:
             rukevweubio/frontend-book-app:${{ github.sha }}
             rukevweubio/frontend-book-app:latest
 
+      - name: Run Trivy Security Scan (Frontend)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: 'rukevweubio/frontend-book-app:latest'
+          format: 'table'
+          exit-code: '0'   
+          severity: 'CRITICAL,HIGH'
       
       - name: Archive Docker Image
         run: |
@@ -542,6 +549,14 @@ jobs:
           tags: |
             rukevweubio/backend-book-app:${{ github.sha }}
             rukevweubio/backend-book-app:latest
+      
+      - name: Run Trivy Security Scan (Backend)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: 'rukevweubio/backend-book-app:latest'
+          format: 'table' 
+          exit-code: '0'  
+          severity: 'CRITICAL,HIGH'
 
       - name: Archive Docker Image
         run: |
