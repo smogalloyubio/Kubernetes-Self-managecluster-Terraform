@@ -527,8 +527,8 @@ jobs:
 
       - name: Push Images to Docker Hub
         run: |
-            rukevweubio/frontend-book-app:${{ github.sha }}
-            rukevweubio/frontend-book-app:latest
+             docker push rukevweubio/frontend-book-app:${{ github.sha }}
+             docker push  rukevweubio/frontend-book-app:latest
 
 
   docker-build-backend:
