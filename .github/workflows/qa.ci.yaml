@@ -509,6 +509,22 @@ jobs:
           name: frontend-docker-image
           path: /tmp/frontend-image.tar
           retention-days: 2
+      - name: Generate Frontend Source SBOM
+        uses: anchore/sbom-action@v0.18.0 # Locked to stable version release
+        with:
+          path: ./frontend 
+          format: spdx-json
+          output-file: frontend-source-sbom.spdx.json
+          upload-artifact: true
+
+      - name: Generate Frontend Image SBOM
+        uses: anchore/sbom-action@v0.18.0
+        with:
+          image: rukevweubio/frontend-book-app:latest
+          format: spdx-json
+          output-file: frontend-image-sbom.spdx.json
+          upload-artifact: true
+
 
   docker-build-backend:
     name: Build Docker image for backend
@@ -568,3 +584,29 @@ jobs:
           name: backend-docker-image
           path: /tmp/backend-image.tar
           retention-days: 2
+
+      - name: Generate Backend Source SBOM
+        uses: anchore/sbom-action@v0.18.0
+        with:
+          path: ./backend 
+          format: spdx-json
+          output-file: backend-source-sbom.spdx.json
+          upload-artifact: true
+
+      - name: Generate Backend Image SBOM
+        uses: anchore/sbom-action@v0.18.0
+        with:
+          image: rukevweubio/backend-book-app:latest
+          format: spdx-json
+          output-file: backend-image-sbom.spdx.json
+          upload-artifact: true
+          
+      - name: Push
+        uses: docker/build-push-action@v7
+        with:
+          push: true
+          tags: |
+            rukevweubio/backend-book-app:${{ github.sha }}
+            rukevweubio/backend-book-app:latest
+            rukevweubio/frontend-book-app:${{ github.sha }}
+            rukevweubio/frontend-book-app:latest
