@@ -257,6 +257,9 @@ jobs:
       - trivy-backend-scan
       - trivy-frontend-scan
     runs-on: ubuntu-latest
+    default:
+      run:
+        working-directory: ./frontend
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -283,6 +286,9 @@ jobs:
     name: Test Java Backend
     needs: [lint-backend] 
     runs-on: ubuntu-latest
+    default:
+      run:
+        working-directory: ./backend 
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -327,6 +333,23 @@ jobs:
           name: frontend-nginx-test-report
           path: ${{ github.workspace }}/nginx-test-result.txt
           if-no-files-found: error
+
+  sonarqube:
+    name: SonarQube Analysis & Quality Gate Check
+    runs-on: ubuntu-latest
+    needs:
+      - test-frontend
+      - test-backend 
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
        
        
              
