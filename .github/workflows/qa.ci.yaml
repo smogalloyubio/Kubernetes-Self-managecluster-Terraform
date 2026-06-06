@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   gitleak-scan:
-    name: Gitleak Scan 
+    name: Gitleak Scans
     runs-on: ubuntu-latest 
     steps:
       - name: Checkout Source Code
@@ -344,7 +344,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
         env:
