@@ -335,11 +335,17 @@ jobs:
       - test-frontend
       - test-backend 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout teh source code 
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Compile Classes
+        run: |
+          cd ./backend
+          mvn clean compile
+
       - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@master
+        uses: sonarsource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
@@ -348,6 +354,8 @@ jobs:
             -Dsonar.projectKey=smogalloyubio_Openshift-Helm-project
             -Dsonar.organization=smogalloyubio
             -Dsonar.sources=.
+            -Dsonar.branch.name=qa
+            -Dsonar.java.binaries=backend/target/classes
        
        
              
