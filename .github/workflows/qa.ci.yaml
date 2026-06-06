@@ -133,6 +133,18 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'     
+      
+      - name: Resolve Maven Dependencies
+        run: |
+          cd ./backend
+          mvn dependency:resolve
+
       - name: Run Trivy on Java Backend
         uses: aquasecurity/trivy-action@master
         with:
@@ -169,11 +181,12 @@ jobs:
 
   trivy-frontend-scan:
     name: Trivy Nginx Frontend Scan
+    needs: [gitleak-scan]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-
+     
       - name: Run Trivy on Nginx Frontend
         uses: aquasecurity/trivy-action@v0.36.0
         with:
