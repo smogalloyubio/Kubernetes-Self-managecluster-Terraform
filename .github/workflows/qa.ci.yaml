@@ -359,11 +359,9 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
           args: >
-            cd ./backend
-            mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=smogalloyubio_Openshift-Helm-project
             -Dsonar.organization=smogalloyubio
-            -Dsonar.sources=.
+            -Dsonar.sources=backend/src,frontend
             -Dsonar.branch.name=qa
             -Dsonar.java.binaries=backend/target/classes
        
