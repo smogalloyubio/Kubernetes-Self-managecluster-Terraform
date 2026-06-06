@@ -37,3 +37,93 @@ jobs:
            name:  gitleak-report
            path: ${{ github.workspace }}/gitleaks-report.json
            if-no-files-found: warn 
+
+  checkov-terraform:
+    name: Checkov Terraform scan 
+    needs: [gitleak-scan] 
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout source code 
+        uses: actions/checkout@v4 
+
+      - name: setup python 
+        uses: actions/setup-python@v5 
+        with:
+          python-version: "3.12"
+
+      - name: checkov install 
+        run: pip install checkov
+         
+      - name: Run Terraform Scan 
+        run: |
+          checkov -d ./terraform \
+            --framework terraform \
+            --output json > checkov-terraform-report.json || true
+
+      - name: Upload Checkov Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkov-terraform-report
+          path: ${{ github.workspace }}/checkov-terraform-report.json
+          if-no-files-found: error
+
+  checkov-frontend:
+    name: Checkov dockerfile frontend scan 
+    needs: [gitleak-scan]
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout source code 
+        uses: actions/checkout@v4
+
+      - name: setup python 
+        uses: actions/setup-python@v5 
+        with:
+          python-version: "3.12"
+
+      - name: checkov install 
+        run: pip install checkov 
+         
+      - name: Run Frontend Dockerfile Scan 
+        run: |
+          checkov -d ./frontend \
+            --framework dockerfile \
+            --output json > checkov-dockerfile-report.json || true
+
+      - name: Upload Checkov Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkov-dockerfile-report
+          path: ${{ github.workspace }}/checkov-dockerfile-report.json
+          if-no-files-found: error
+
+  checkov-backend:
+    name: Checkov Dockerfile backend scan 
+    needs: [gitleak-scan] 
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout source code 
+        uses: actions/checkout@v4
+
+      - name: setup python 
+        uses: actions/setup-python@v5 
+        with:
+          python-version: "3.12"
+
+      - name: checkov install 
+        run: pip install checkov 
+         
+      - name: Run Backend Dockerfile Scan 
+        run: | 
+          checkov -d ./backend \
+            --framework dockerfile \
+            --output json > checkov-backend-report.json || true
+
+      - name: Upload Checkov Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkov-backend-report
+          path: ${{ github.workspace }}/checkov-backend-report.json
+          if-no-files-found: error
+             
+
+       
