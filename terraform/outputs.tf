@@ -6,6 +6,14 @@ output "subnet_id" {
   value = module.network.subnet_id
 }
 
-output "instance_external_ip" {
-  value = module.compute.instance_ip
+output "sonarqube_public_ip" {
+  value = module.compute.sonarqube_ip
+}
+
+output "k8s_master_public_ip" {
+  value = module.compute.k8s_master_ip
+}
+
+output "k8s_worker_public_ip" {
+  value = module.compute.k8s_worker_ip
 }

@@ -27,14 +27,20 @@ variable "subnet_cidr" {
   default     = "10.0.1.0/24"
 }
 
-variable "instance_name" {
-  description = "The name of the compute instance"
-  type        = string
-  default     = "library-app-instance"
-}
-
 variable "machine_type" {
-  description = "The machine type for the instance"
+  description = "The machine type for the instances"
   type        = string
   default     = "e2-medium"
+}
+
+variable "k8s_master" {
+  description = "Name prefix of the master node"
+  type        = string
+  default     = "master-node"
+}
+
+variable "k8s_worker" {
+  description = "Name prefix of the worker node"
+  type        = string
+  default     = "worker-node"
 }

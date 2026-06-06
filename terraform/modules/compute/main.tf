@@ -1,46 +1,63 @@
-variable "instance_name" {
-  description = "The name of the compute instance"
-  type        = string
-}
-
-variable "machine_type" {
-  description = "The machine type for the instance"
-  type        = string
-}
-
-variable "zone" {
-  description = "The zone for the instance"
-  type        = string
-}
-
-variable "subnet_id" {
-  description = "The subnetwork ID to launch in"
-  type        = string
-}
-
-resource "google_compute_instance" "app" {
-  name         = var.instance_name
+resource "google_compute_instance" "sonarqube" {
+  name         = "sonarqube-server"
   machine_type = var.machine_type
   zone         = var.zone
 
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-11"
+      image = "ubuntu-os-cloud/ubuntu-2204-lts"
+      size  = 30 
     }
   }
 
   network_interface {
     subnetwork = var.subnet_id
-    access_config {
-      // Ephemeral public IP
+    access_config {}
+  }
+}
+
+resource "google_compute_instance" "k8s_master" {
+  name         = "${var.k8s_master}-machine"
+  machine_type = var.machine_type
+  zone         = var.zone
+
+  boot_disk {
+    initialize_params {
+      image = "ubuntu-os-cloud/ubuntu-2204-lts"
     }
   }
 
-  tags = ["http-server", "ssh-server"]
-
-  metadata_startup_script = "echo 'Hello, World!' > /var/www/html/index.html"
+  network_interface {
+    subnetwork = var.subnet_id
+    access_config {}
+  }
 }
 
-output "instance_ip" {
-  value = google_compute_instance.app.network_interface[0].access_config[0].nat_ip
+resource "google_compute_instance" "k8s_worker" {
+  name         = "${var.k8s_worker}-machine"
+  machine_type = var.machine_type
+  zone         = var.zone
+
+  boot_disk {
+    initialize_params {
+      image = "ubuntu-os-cloud/ubuntu-2204-lts"
+    }
+  }
+
+  network_interface {
+    subnetwork = var.subnet_id
+    access_config {}
+  }
+}
+
+output "sonarqube_ip" {
+  value = google_compute_instance.sonarqube.network_interface[0].access_config[0].nat_ip
+}
+
+output "k8s_master_ip" {
+  value = google_compute_instance.k8s_master.network_interface[0].access_config[0].nat_ip
+}
+
+output "k8s_worker_ip" {
+  value = google_compute_instance.k8s_worker.network_interface[0].access_config[0].nat_ip
 }
