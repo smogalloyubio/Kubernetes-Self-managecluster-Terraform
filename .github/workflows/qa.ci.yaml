@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
+        with:
+            fetch-depth: 0
 
       - name: Run Gitleak scan 
         run: |
