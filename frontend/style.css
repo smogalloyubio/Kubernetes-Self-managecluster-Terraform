@@ -1,0 +1,122 @@
+:root {
+    --sidebar-width: 260px;
+    --primary-bg: #121416;
+    --secondary-bg: #1e2125;
+    --accent-color: #0d6efd;
+    --text-main: #e9ecef;
+    --text-muted: #adb5bd;
+    --border-color: #2c3034;
+}
+
+body {
+    background-color: var(--primary-bg);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--secondary-bg);
+    height: 100vh;
+    position: fixed;
+    border-right: 1px solid var(--border-color);
+    z-index: 1000;
+}
+
+.sidebar .brand {
+    padding: 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.nav-link {
+    color: var(--text-muted);
+    padding: 0.8rem 1.5rem;
+    transition: all 0.2s;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--text-main);
+    background-color: rgba(13, 110, 253, 0.1);
+    border-left: 4px solid var(--accent-color);
+}
+
+/* Main Content Area */
+.main-content {
+    margin-left: var(--sidebar-width);
+    padding: 2rem;
+    min-height: 100vh;
+}
+
+/* Dashboard Cards */
+.stat-card {
+    background-color: var(--secondary-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0;
+}
+
+.stat-label {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Book Card Styling */
+.book-card {
+    background-color: var(--secondary-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    height: 100%;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.4);
+}
+
+.book-card .card-body {
+    padding: 1.5rem;
+}
+
+.book-badge {
+    font-size: 0.75rem;
+    padding: 0.4em 0.8em;
+    border-radius: 6px;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--primary-bg);
+}
+::-webkit-scrollbar-thumb {
+    background: #343a40;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #495057;
+}
+
+/* Toast/Alert Fixes */
+.toast-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1060;
+}

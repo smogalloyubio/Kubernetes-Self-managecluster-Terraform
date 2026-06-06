@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Admin - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <div class="sidebar d-flex flex-column shadow">
+        <div class="brand">LIBRARY ADMIN</div>
+        <ul class="nav flex-column mt-4">
+            <li class="nav-item">
+                <a href="index.html" class="nav-link active">Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a href="add-book.html" class="nav-link">Add New Book</a>
+            </li>
+        </ul>
+        <div class="mt-auto p-3 text-muted border-top border-secondary">
+            <small>v1.0.0-PRO</small>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <header class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h1 class="h3 mb-0">Library at a Glance</h1>
+                <p class="text-muted">Manage your collection and track availability.</p>
+            </div>
+            <div class="d-flex gap-3">
+                <input type="text" id="search-books" class="form-control bg-dark text-white border-secondary" placeholder="Search books..." style="width: 300px;">
+                <a href="add-book.html" class="btn btn-primary">Add Book</a>
+            </div>
+        </header>
+
+        <section id="stats-container" class="row mb-5 g-4">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <p class="stat-label">Total Collection</p>
+                    <p class="stat-value" id="stat-total">0</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <p class="stat-label">Available</p>
+                    <p class="stat-value text-success" id="stat-available">0</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <p class="stat-label">On Loan</p>
+                    <p class="stat-value text-warning" id="stat-borrowed">0</p>
+                </div>
+            </div>
+        </section>
+
+        <hr class="border-secondary my-5">
+
+        <section>
+            <h4 class="mb-4">Book Collection</h4>
+            <div class="row" id="book-grid">
+                <!-- Cards will be rendered here -->
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
+    <script>
+        window.onload = () => {
+            fetchBooks();
+            setupSearch();
+        };
+    </script>
+</body>
+</html>

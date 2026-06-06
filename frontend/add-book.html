@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Admin - Add Book</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <div class="sidebar d-flex flex-column shadow">
+        <div class="brand">LIBRARY ADMIN</div>
+        <ul class="nav flex-column mt-4">
+            <li class="nav-item">
+                <a href="index.html" class="nav-link">Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a href="add-book.html" class="nav-link active">Add New Book</a>
+            </li>
+        </ul>
+    </div>
+
+    <main class="main-content">
+        <header class="mb-5">
+            <h1 class="h3">Add New Resource</h1>
+            <p class="text-muted">Register a new book into the system database.</p>
+        </header>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card stat-card shadow-lg">
+                    <div class="card-body p-4">
+                        <form id="add-book-form">
+                            <div class="mb-4">
+                                <label for="title" class="form-label text-muted">BOOK TITLE / NAME</label>
+                                <input type="text" class="form-control bg-dark text-white border-secondary p-3" id="title" placeholder="e.g. Clean Code" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="author" class="form-label text-muted">AUTHOR / WRITER</label>
+                                <input type="text" class="form-control bg-dark text-white border-secondary p-3" id="author" placeholder="e.g. Robert C. Martin" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="isbn" class="form-label text-muted">ISBN NUMBER (UNIQUE ID)</label>
+                                <input type="text" class="form-control bg-dark text-white border-secondary p-3" id="isbn" placeholder="e.g. 978-0132350884" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="borrowedBy" class="form-label text-muted">BORROWED BY (LEAVE EMPTY IF AVAILABLE)</label>
+                                <input type="text" class="form-control bg-dark text-white border-secondary p-3" id="borrowedBy" placeholder="e.g. Jane Smith">
+                            </div>
+                            <div class="d-flex gap-3 mt-5">
+                                <button type="submit" class="btn btn-primary btn-lg px-5">Save Book</button>
+                                <a href="index.html" class="btn btn-outline-light btn-lg">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
+    <script>
+        document.getElementById('add-book-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const borrowedBy = document.getElementById('borrowedBy').value.trim();
+            const bookData = {
+                title: document.getElementById('title').value,
+                author: document.getElementById('author').value,
+                isbn: document.getElementById('isbn').value,
+                available: borrowedBy === "",
+                borrowedBy: borrowedBy || null
+            };
+            const success = await addBook(bookData);
+            if (success) {
+                setTimeout(() => window.location.href = 'index.html', 1000);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -15,9 +15,9 @@ services:
       timeout: 20s
       retries: 10
 
-  app:
-    build: .
-    container_name: library-app
+  backend:
+    build: ./backend
+    container_name: library-backend
     depends_on:
       db:
         condition: service_healthy
@@ -28,3 +28,11 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+  frontend:
+    build: ./frontend
+    container_name: library-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
