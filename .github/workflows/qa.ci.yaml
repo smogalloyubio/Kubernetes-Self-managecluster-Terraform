@@ -364,7 +364,20 @@ jobs:
             -Dsonar.sources=backend/src,frontend
             -Dsonar.branch.name=qa
             -Dsonar.java.binaries=backend/target/classes
-       
+
+      - name: SonarQube Quality Gate check
+        id: sonarqube-quality-gate-check
+        continue-on-error: true
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        with:
+          pollingTimeoutSec: 600
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
+          
+      - name: "Example show SonarQube Quality Gate Status value"
+        run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+
        
              
 
