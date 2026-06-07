@@ -1,4 +1,4 @@
-name: Build gitaction workflow that deploy docker image to kubernestes 
+name: Build gitaction workflow that deploy docker image to kubernestes  and google cloud 
 
 on:
   push:
@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   gitleak-scan:
-    name: Gitleak Scan 
+    name: Gitleak Scans
     runs-on: ubuntu-latest 
     steps:
       - name: Checkout Source Code
@@ -36,6 +36,579 @@ jobs:
       - name: Upload Artifact 
         uses: actions/upload-artifact@v4 
         with: 
-           name:  gitleaks-report
-           path:   gitleaks-report.json
-           if-no-files-found: warn
+           name:  gitleak-report
+           path: ${{ github.workspace }}/gitleaks-report.json
+           if-no-files-found: warn 
+
+  checkov-terraform:
+    name: Checkov Terraform scan 
+    needs: [gitleak-scan] 
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout source code 
+        uses: actions/checkout@v4 
+
+      - name: setup python 
+        uses: actions/setup-python@v5 
+        with:
+          python-version: "3.12"
+
+      - name: checkov install 
+        run: pip install checkov
+         
+      - name: Run Terraform Scan 
+        run: |
+          checkov -d ./terraform \
+            --framework terraform \
+            --output json > checkov-terraform-report.json || true
+
+      - name: Upload Checkov Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkov-terraform-report
+          path: ${{ github.workspace }}/checkov-terraform-report.json
+          if-no-files-found: error
+
+  checkov-frontend:
+    name: Checkov dockerfile frontend scan 
+    needs: [gitleak-scan]
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout source code 
+        uses: actions/checkout@v4
+
+      - name: setup python 
+        uses: actions/setup-python@v5 
+        with:
+          python-version: "3.12"
+
+      - name: checkov install 
+        run: pip install checkov 
+         
+      - name: Run Frontend Dockerfile Scan 
+        run: |
+          checkov -d ./frontend \
+            --framework dockerfile \
+            --output json > checkov-dockerfile-report.json || true
+
+      - name: Upload Checkov Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkov-dockerfile-report
+          path: ${{ github.workspace }}/checkov-dockerfile-report.json
+          if-no-files-found: error
+
+  checkov-backend:
+    name: Checkov Dockerfile backend scan 
+    needs: [gitleak-scan] 
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout source code 
+        uses: actions/checkout@v4
+
+      - name: setup python 
+        uses: actions/setup-python@v5 
+        with:
+          python-version: "3.12"
+
+      - name: checkov install 
+        run: pip install checkov 
+         
+      - name: Run Backend Dockerfile Scan 
+        run: | 
+          checkov -d ./backend \
+            --framework dockerfile \
+            --output json > checkov-backend-report.json || true
+
+      - name: Upload Checkov Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkov-backend-report
+          path: ${{ github.workspace }}/checkov-backend-report.json
+          if-no-files-found: error
+
+  trivy-backend-scan:
+    name: Trivy  Backend Scan
+    needs: [gitleak-scan]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'     
+      
+      - name: Resolve Maven Dependencies
+        run: |
+          cd ./backend
+          mvn dependency:resolve
+
+      - name: Run Trivy on Java Backend
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: './backend' 
+          format: 'json'
+          output: 'trivy-backend-report.json'
+          exit-code: '0'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Run Trivy on  backendtable
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: './backend' 
+          format: 'table'
+          output: 'trivy-backendtable-report.json'
+          exit-code: '0'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Backend Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-backend-security-report
+          path: ${{ github.workspace }}/trivy-backend-report.json
+          if-no-files-found: error
+
+      - name: Upload Backend table Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-backendtable-security-report
+          path: ${{ github.workspace }}/trivy-backendtable-report.json
+          if-no-files-found: error
+
+  trivy-frontend-scan:
+    name: Trivy Nginx Frontend Scan
+    needs: [gitleak-scan]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+     
+      - name: Run Trivy on Nginx Frontend
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: 'fs'
+          scan-ref: './frontend' 
+          format: 'json'
+          output: 'trivy-frontend-report.json'
+          exit-code: '0'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Run Trivy on Nginx Frontend table format 
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: 'fs'
+          scan-ref: './frontend' 
+          format: 'table'
+          output: 'trivy-frontendtable-report.json'
+          exit-code: '0'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Frontend Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-frontend-security-report
+          path: ${{ github.workspace }}/trivy-frontend-report.json
+          if-no-files-found: error 
+
+      - name: Upload Frontend Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-frontendtable-security-report
+          path: ${{ github.workspace }}/trivy-frontendtable-report.json
+          if-no-files-found: error 
+
+  lint-backend:
+    name: Lint Java Backend
+    needs: 
+      - gitleak-scan
+      - checkov-terraform
+      - checkov-frontend 
+      - checkov-backend 
+      - trivy-backend-scan
+      - trivy-frontend-scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Run Checkstyle
+        run: |
+          cd ./backend
+          mvn checkstyle:check || true
+
+  lint-frontend:
+    name: Lint Frontend (Nginx, HTML, JS)
+    needs: 
+      - gitleak-scan
+      - checkov-terraform
+      - checkov-frontend 
+      - checkov-backend 
+      - trivy-backend-scan
+      - trivy-frontend-scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Lint HTML & JavaScript
+        run: |
+          npm install -g htmlhint eslint
+          htmlhint "./frontend/**/*.html" || true
+          # Soft configuration to check vanilla JavaScript syntax flaws
+          npx eslint "./frontend/**/*.js" --env browser || true
+
+      - name: Lint Nginx Configuration
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}/frontend:/lint" \
+            yandex/gixy /lint/nginx.conf || true
+
+  test-backend:
+    name: Test Java Backend
+    needs: [lint-backend] 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Run Maven Tests
+        run: |
+          cd ./backend
+          mvn test
+
+      - name: Upload Java Test Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-unit-test-reports
+          path: ${{ github.workspace }}/backend/target/surefire-reports/
+          if-no-files-found: warn
+
+  test-frontend:
+    name: Test Frontend (Nginx Validation)
+    needs: [lint-frontend] 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Test Nginx Runtime Config Syntax
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}/frontend/nginx.conf:/etc/nginx/nginx.conf:ro" \
+            nginx:alpine nginx -t > nginx-test-result.txt 2>&1 || true
+          cat nginx-test-result.txt
+
+      - name: Upload Frontend Test Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-nginx-test-report
+          path: ${{ github.workspace }}/nginx-test-result.txt
+          if-no-files-found: error
+
+  sonarqube:
+    name: SonarQube Analysis & Quality Gate Check
+    runs-on: ubuntu-latest
+    needs:
+      - test-frontend
+      - test-backend 
+    steps:
+      - name: Checkout teh source code 
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+      
+      - name: Compile Classes
+        run: |
+          cd ./backend
+          mvn clean compile
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.projectKey=smogalloyubio_Openshift-Helm-project
+            -Dsonar.organization=smogalloyubio
+            -Dsonar.sources=backend/src,frontend
+            -Dsonar.branch.name=qa
+            -Dsonar.java.binaries=backend/target/classes
+            
+  sonarqube-code-quality:
+    name: Quality Gate Check
+    runs-on: ubuntu-latest
+    needs:
+      - test-frontend
+      - test-backend 
+    steps:
+      - name: Checkout teh source code 
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+      
+      - name: Compile Classes
+        run: |
+          cd ./backend
+          mvn clean compile
+
+      - name: SonarQube Quality Gate check
+        id: sonarqube-quality-gate-check
+        continue-on-error: true
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        with:
+          pollingTimeoutSec: 600
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
+          
+      - name: "Example show SonarQube Quality Gate Status value"
+        run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+
+  build-backend:
+    name: Build Java Backend artifact
+    needs: [sonarqube] 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout teh source code 
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build Production JAR
+        run: |
+          cd ./backend
+          mvn clean package -DskipTests 
+   
+
+      - name: Upload Backend Jar Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-production-jar
+          path: backend/target/*.jar
+          if-no-files-found: error    
+
+  build-frontend:
+    name: Build Frontend Artifact Bundle
+    needs: [sonarqube] 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bundle Frontend Assets
+        run: |
+          mkdir -p dist
+          cp ./frontend/index.html ./dist/
+          cp ./frontend/app.js ./dist/
+          cp ./frontend/nginx.conf ./dist/
+
+      - name: Upload Frontend Bundle Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-production-bundle
+          path: dist/
+          if-no-files-found: error
+
+  docker-build-frontend:
+    name: Build Docker image for frontend
+    needs: [build-frontend]
+    runs-on: ubuntu-latest  
+    defaults:
+      run:
+        working-directory: ./frontend  
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4  
+
+      - name: Download Frontend Assets
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-production-bundle
+          path: ./frontend/dist/
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3  
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          load: true  
+          push: false
+          tags: |
+            rukevweubio/frontend-book-app:${{ github.sha }}
+            rukevweubio/frontend-book-app:latest
+
+      - name: Run Trivy Security Scan (Frontend)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: 'rukevweubio/frontend-book-app:latest'
+          format: 'table'
+          exit-code: '0'   
+          severity: 'CRITICAL,HIGH'
+      
+      - name: Archive Docker Image
+        run: |
+          docker save rukevweubio/frontend-book-app:latest -o /tmp/frontend-image.tar
+
+      - name: Upload Docker Image Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-docker-image
+          path: /tmp/frontend-image.tar
+          retention-days: 2
+      - name: Generate Frontend Source SBOM
+        uses: anchore/sbom-action@v0.18.0 # Locked to stable version release
+        with:
+          path: ./frontend 
+          format: spdx-json
+          output-file: frontend-source-sbom.spdx.json
+          upload-artifact: true
+
+      - name: Generate Frontend Image SBOM
+        uses: anchore/sbom-action@v0.18.0
+        with:
+          image: rukevweubio/frontend-book-app:latest
+          format: spdx-json
+          output-file: frontend-image-sbom.spdx.json
+          upload-artifact: true
+
+      - name: Push Images to Docker Hub
+        run: |
+             docker push rukevweubio/frontend-book-app:${{ github.sha }}
+             docker push  rukevweubio/frontend-book-app:latest
+
+
+  docker-build-backend:
+    name: Build Docker image for backend
+    needs: [build-backend]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Download Backend JAR
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-production-jar
+          path: ./backend/target/
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          load: true
+          push: false
+          tags: |
+            rukevweubio/backend-book-app:${{ github.sha }}
+            rukevweubio/backend-book-app:latest
+      
+      - name: Run Trivy Security Scan (Backend)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: 'rukevweubio/backend-book-app:latest'
+          format: 'table' 
+          exit-code: '0'  
+          severity: 'CRITICAL,HIGH'
+
+      - name: Archive Docker Image
+        run: |
+          docker save rukevweubio/backend-book-app:latest -o /tmp/backend-image.tar
+
+      - name: Upload Docker Image Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-docker-image
+          path: /tmp/backend-image.tar
+          retention-days: 2
+
+      - name: Generate Backend Source SBOM
+        uses: anchore/sbom-action@v0.18.0
+        with:
+          path: ./backend 
+          format: spdx-json
+          output-file: backend-source-sbom.spdx.json
+          upload-artifact: true
+
+      - name: Generate Backend Image SBOM
+        uses: anchore/sbom-action@v0.18.0
+        with:
+          image: rukevweubio/backend-book-app:latest
+          format: spdx-json
+          output-file: backend-image-sbom.spdx.json
+          upload-artifact: true
+
+      - name: Push Images to Docker Hub
+        run: |
+          docker push rukevweubio/backend-book-app:${{ github.sha }}
+          docker push rukevweubio/backend-book-app:latest

@@ -15,6 +15,7 @@
 	<description>Library Management System with Spring Boot</description>
 	<properties>
 		<java.version>21</java.version>
+		<sonar.organization>smogalloyubio</sonar.organization>
 	</properties>
 	<dependencies>
 		<dependency>
