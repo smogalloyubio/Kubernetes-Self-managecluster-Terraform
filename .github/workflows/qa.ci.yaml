@@ -69,6 +69,35 @@ jobs:
           path: ${{ github.workspace }}/checkov-terraform-report.json
           if-no-files-found: error
 
+  checkov-kubernetes:
+    name: Checkov Kubernestes scan 
+    needs: [gitleak-scan] 
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout source code 
+        uses: actions/checkout@v4 
+
+      - name: setup python 
+        uses: actions/setup-python@v5 
+        with:
+          python-version: "3.12"
+
+      - name: checkov install 
+        run: pip install checkov
+         
+      - name: Run Terraform Scan 
+        run: |
+          checkov -d ./kubernestes \
+            --framework kubernestes\
+            --output json > checkov-kubernestes-report.json || true
+
+      - name: Upload Checkov Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkov-terraform-report
+          path: ${{ github.workspace }}/checkov-kubernestes-report.json
+          if-no-files-found: error
+
   checkov-frontend:
     name: Checkov dockerfile frontend scan 
     needs: [gitleak-scan]
@@ -228,6 +257,7 @@ jobs:
     needs: 
       - gitleak-scan
       - checkov-terraform
+      - checkov-kubernestes
       - checkov-frontend 
       - checkov-backend 
       - trivy-backend-scan
