@@ -1,0 +1,22 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deploy
+  namespace: qa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend-app
+          image: rukevweubio/frontend-book-app:fe7bcb980424cb683680e170e105375ae0738d50
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
