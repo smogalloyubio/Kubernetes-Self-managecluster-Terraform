@@ -1,4 +1,4 @@
-name: Build gitaction workflow that deploy docker image  and google
+name: Build gitaction workflow that deploy docker image
 
 on:
   push:
