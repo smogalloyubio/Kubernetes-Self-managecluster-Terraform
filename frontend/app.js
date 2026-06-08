@@ -149,19 +149,41 @@ function showToast(message, type = 'info') {
     }, 4000);
 }
 
+// --- Initialization ---
+
+document.addEventListener('DOMContentLoaded', () => {
+    const path = window.location.pathname;
+    if (path.endsWith('index.html') || path === '/') {
+        fetchBooks();
+        setupSearch();
+    }
+});
+
 // Search Functionality
 function setupSearch() {
     const searchInput = document.getElementById('search-books');
     if (!searchInput) return;
 
+    let timeout = null;
     searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase();
-        const filtered = state.books.filter(b => 
-            b.title.toLowerCase().includes(query) || 
-            b.author.toLowerCase().includes(query) ||
-            b.isbn.includes(query)
-        );
-        renderFilteredGrid(filtered);
+        const query = e.target.value;
+        
+        clearTimeout(timeout);
+        if (query.trim().length === 0) {
+            renderDashboard();
+            return;
+        }
+
+        timeout = setTimeout(async () => {
+            try {
+                const response = await fetch(`${API_URL}/search?keyword=${encodeURIComponent(query)}`);
+                if (!response.ok) throw new Error('Search failed');
+                const results = await response.json();
+                renderFilteredGrid(results);
+            } catch (err) {
+                console.error('Search error:', err);
+            }
+        }, 300);
     });
 }
 
