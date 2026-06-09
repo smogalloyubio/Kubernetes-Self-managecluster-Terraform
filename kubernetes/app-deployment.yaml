@@ -28,6 +28,6 @@ spec:
               mountPath: /var/lib/mysql
       volumes:
         - name: mysql-storage
-          persistentVolumeClaim:
-            claimName: mysql-pvc
+          emptyDir:
+            medium: Memory
 
