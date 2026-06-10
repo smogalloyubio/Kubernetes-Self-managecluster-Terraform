@@ -31,6 +31,11 @@ public class BookRestController {
         return ResponseEntity.ok(bookService.getBookById(id));
     }
 
+    @GetMapping("/search")
+    public List<Book> searchBooks(@RequestParam String keyword) {
+        return bookService.searchBooks(keyword);
+    }
+
     @PostMapping
     public Book createBook(@Valid @RequestBody Book book) {
         return bookService.saveBook(book);
@@ -45,5 +50,15 @@ public class BookRestController {
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/borrow")
+    public ResponseEntity<Book> borrowBook(@PathVariable Long id, @RequestParam String username) {
+        return ResponseEntity.ok(bookService.borrowBook(id, username));
+    }
+
+    @PostMapping("/{id}/return")
+    public ResponseEntity<Book> returnBook(@PathVariable Long id) {
+        return ResponseEntity.ok(bookService.returnBook(id));
     }
 }

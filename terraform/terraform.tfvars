@@ -1,6 +1,6 @@
-project_id   = "kkgcplabs01-001"
+project_id   = "kkgcplabs01-034"
 region       = "us-central1"
-zone         = "us-central1-a"
+zone         =  "us-central1-a" 
 network_name = "library-vpc"
 subnet_cidr  = "10.0.1.0/24"
 machine_type = "e2-medium"

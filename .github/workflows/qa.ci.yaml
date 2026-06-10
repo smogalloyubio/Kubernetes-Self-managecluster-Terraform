@@ -1,4 +1,5 @@
-name: Build gitaction workflow that deploy docker image   and google cloud 
+
+name: Build gitaction workflow that deploy docker image   and google cloud  
 
 on:
   push:
@@ -70,7 +71,11 @@ jobs:
           if-no-files-found: error
 
   checkov-kubernetes:
+<<<<<<< HEAD
     name: Checkov Kubernestes scan 
+=======
+    name: Checkov kubernetes scan 
+>>>>>>> qa
     needs: [gitleak-scan] 
     runs-on: ubuntu-latest
     steps:
@@ -85,17 +90,30 @@ jobs:
       - name: checkov install 
         run: pip install checkov
          
+<<<<<<< HEAD
       - name: Run Terraform Scan 
         run: |
           checkov -d ./kubernestes \
             --framework kubernestes\
             --output json > checkov-kubernestes-report.json || true
+=======
+      - name: Run Kubernetes Scan 
+        run: |
+          checkov -d ./kubernetes \
+            --framework kubernetes \
+            --output json > checkov-kubernetes-report.json || true
+>>>>>>> qa
 
       - name: Upload Checkov Artifact
         uses: actions/upload-artifact@v4
         with:
+<<<<<<< HEAD
           name: checkov-terraform-report
           path: ${{ github.workspace }}/checkov-kubernestes-report.json
+=======
+          name: checkov-kubernetes-report
+          path: ${{ github.workspace }}/checkov-kubernetes-report.json
+>>>>>>> qa
           if-no-files-found: error
 
   checkov-frontend:
@@ -359,7 +377,6 @@ jobs:
           name: frontend-nginx-test-report
           path: ${{ github.workspace }}/nginx-test-result.txt
           if-no-files-found: error
-
   sonarqube:
     name: SonarQube Analysis & Quality Gate Check
     runs-on: ubuntu-latest
@@ -367,8 +384,7 @@ jobs:
       - test-frontend
       - test-backend 
     steps:
-      - name: Checkout teh source code 
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -385,54 +401,23 @@ jobs:
           mvn clean compile
 
       - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@v5
+        uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        with:
-          args: >
-            -Dsonar.projectKey=smogalloyubio_Openshift-Helm-project
-            -Dsonar.organization=smogalloyubio
-            -Dsonar.sources=backend/src,frontend
-            -Dsonar.branch.name=qa
-            -Dsonar.java.binaries=backend/target/classes
-            
-  sonarqube-code-quality:
-    name: Quality Gate Check
-    runs-on: ubuntu-latest
-    needs:
-      - test-frontend
-      - test-backend 
-    steps:
-      - name: Checkout teh source code 
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: 'maven'
-      
-      - name: Compile Classes
-        run: |
-          cd ./backend
-          mvn clean compile
 
       - name: SonarQube Quality Gate check
         id: sonarqube-quality-gate-check
-        continue-on-error: true
         uses: sonarsource/sonarqube-quality-gate-action@master
         with:
           pollingTimeoutSec: 600
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
-          
+
       - name: "Example show SonarQube Quality Gate Status value"
         run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+            
 
   build-backend:
     name: Build Java Backend artifact

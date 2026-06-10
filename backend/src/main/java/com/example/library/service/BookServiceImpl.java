@@ -33,12 +33,19 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book saveBook(Book book) {
+        if (bookRepository.findByIsbn(book.getIsbn()).isPresent()) {
+            throw new RuntimeException("ISBN already exists: " + book.getIsbn());
+        }
         return bookRepository.save(book);
     }
 
     @Override
     public Book updateBook(Long id, Book bookDetails) {
         Book book = getBookById(id);
+        if (!book.getIsbn().equals(bookDetails.getIsbn()) &&
+                bookRepository.findByIsbn(bookDetails.getIsbn()).isPresent()) {
+            throw new RuntimeException("ISBN already exists: " + bookDetails.getIsbn());
+        }
         book.setTitle(bookDetails.getTitle());
         book.setAuthor(bookDetails.getAuthor());
         book.setIsbn(bookDetails.getIsbn());

@@ -1,4 +1,3 @@
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -21,7 +20,6 @@ spec:
           ports:
             - containerPort: 8080 
           env:
-            
             - name: SPRING_DATASOURCE_URL
               value: jdbc:mysql://database-service:3306/librarydb?allowPublicKeyRetrieval=true&useSSL=false
             - name: SPRING_DATASOURCE_USERNAME

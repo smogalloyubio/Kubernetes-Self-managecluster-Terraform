@@ -1,16 +1,37 @@
 target/
+backend/target/
+frontend/dist/
 *.class
 *.jar
 *.war
 *.ear
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+.terraform.lock.hcl
+
+# IDEs
 .settings/
 .classpath
 .project
 .factorypath
 .idea/
 *.iml
+.vscode/
+
+# System
 .DS_Store
 node_modules/
 .env
+<<<<<<< HEAD
 .terraform 
 *.terraform*
+=======
+checkov-*-report.json
+trivy-*-report.json
+gitleaks-report.json
+nginx-test-result.txt
+>>>>>>> qa
