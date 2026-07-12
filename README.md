@@ -63,29 +63,7 @@ The application delivery pipeline is automated using **GitHub Actions**, which p
 
 
 The application deployed on the Kubernetes cluster follows a three-tier architecture:
-
-```
-                User
-
-                 |
-
-                 |
-
-          Frontend Layer
-
-                 |
-
-                 |
-
-        Spring Boot Backend API
-
-                 |
-
-                 |
-
-            MySQL Database
-
-```
+![Application Diagram](https://github.com/smogalloyubio/Kubernetes-Self-managecluster-Terraform/blob/main/Achitecturaldiagram/Copilot_20260712_141213.png)
 
 
 The CI/CD pipeline builds the application container image, pushes it to Docker Hub, and updates the Kubernetes deployment configuration.
