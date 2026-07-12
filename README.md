@@ -191,7 +191,7 @@ Worker nodes run:
 * Kubernetes workloads.
 * Database services.
 
-
+![Kubernetes Cluster](https://github.com/smogalloyubio/Kubernetes-Self-managecluster-Terraform/blob/main/Achitecturaldiagram/Screenshot%202026-06-09%20at%2001.09.27.png)
 ---
 
 ## 3. Application Layer
