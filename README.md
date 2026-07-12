@@ -155,6 +155,8 @@ The infrastructure consists of:
 
 Terraform provides:
 
+The infrastructure is provisioned using Terraform, enabling the complete cloud environment to be created from code. Instead of manually configuring resources in the Google Cloud Console, Terraform automates the deployment of networking components and three Google Compute Engine virtual machines that serve as the foundation of the Kubernetes cluster.
+The infrastructure consists of one control plane node and two worker nodes, providing a production-style environment for running containerized workloads. Using Infrastructure as Code ensures deployments are repeatable, version-controlled, and easy to recreate across different environments.
 * Repeatable infrastructure deployment.
 * Version-controlled infrastructure changes.
 * Automated environment creation.
@@ -164,19 +166,9 @@ Terraform provides:
 ![terraform  provison](https://github.com/smogalloyubio/Kubernetes-Self-managecluster-Terraform/blob/main/Achitecturaldiagram/Screenshot%202026-06-08%20at%2023.41.06.png)
 
 ## 2. Kubernetes Cluster Layer
-
-
-The Kubernetes cluster is self-managed using:
-
-
-* kubeadm
-* kubelet
-* kubectl
-
-
+Unlike managed Kubernetes services such as Google Kubernetes Engine (GKE), this project demonstrates how to build and administer a Kubernetes cluster from scratch using kubeadm, kubelet, and kubectl. The cluster was manually initialized on the provisioned virtual machines, providing hands-on experience with Kubernetes control plane configuration, worker node registration, networking, and cluster management.
+Building a self-managed cluster provides a deeper understanding of Kubernetes internals and mirrors the responsibilities of platform engineers who maintain Kubernetes environments outside of managed cloud offerings.
 The cluster consists of:
-
-
 The control plane manages:
 
 * API Server.
@@ -224,9 +216,10 @@ Responsible for:
 ---
 
 ## 4. CI/CD Pipeline Layer
+The project uses GitHub Actions to automate the complete software delivery lifecycle. Every code change pushed to the repository triggers a fully automated DevSecOps pipeline that validates the application, performs security analysis, builds a production-ready Docker image, and prepares the application for deployment.
+The pipeline includes multiple quality gates to ensure only validated artifacts reach the Kubernetes environment. Automated stages include secret detection with GitLeaks, Infrastructure as Code scanning using Checkov, static code analysis with SonarQube, vulnerability scanning using Trivy, Software Bill of Materials (SBOM) generation, container image creation, and publishing to Docker Hub.
 
-
-GitHub Actions automates the complete software delivery lifecycle.
+After a successful build, the pipeline updates the Kubernetes deployment manifests with the latest container image. These changes are committed back to the Git repository, where Argo CD detects the update and automatically synchronizes the production Kubernetes cluster. This GitOps workflow ensures deployments remain consistent, traceable, and fully automated while eliminating manual intervention
 
 
 The pipeline performs:
