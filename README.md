@@ -241,7 +241,7 @@ The pipeline performs:
 
 
 ---
-
+![Gitaction  Pipeline](https://github.com/smogalloyubio/Kubernetes-Self-managecluster-Terraform/blob/main/Achitecturaldiagram/Screenshot%202026-06-09%20at%2000.22.29.png)
 ## 5. GitOps Deployment Layer
 
 
