@@ -258,3 +258,4 @@ Argo CD provides:
 
 
 ---
+![Argocd pipeline](https://github.com/smogalloyubio/Kubernetes-Self-managecluster-Terraform/blob/main/Achitecturaldiagram/Screenshot%202026-06-09%20at%2002.18.51.png)
