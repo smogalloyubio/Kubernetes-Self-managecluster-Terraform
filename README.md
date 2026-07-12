@@ -156,7 +156,7 @@ This platform solves these challenges by providing:
 
 # Architecture Overview
 
-
+![Architectural Diagram](https://github.com/smogalloyubio/Kubernetes-Self-managecluster-Terraform/blob/main/Achitecturaldiagram/ubiowororukevweimage.jpg)
 The platform consists of five major layers:
 
 
