@@ -161,6 +161,7 @@ Terraform provides:
 
 
 ---
+![terraform  provison](https://github.com/smogalloyubio/Kubernetes-Self-managecluster-Terraform/blob/main/Achitecturaldiagram/Screenshot%202026-06-08%20at%2023.41.06.png)
 
 ## 2. Kubernetes Cluster Layer
 
@@ -174,26 +175,6 @@ The Kubernetes cluster is self-managed using:
 
 
 The cluster consists of:
-
-
-```
-                 Kubernetes Cluster
-
-
-              Control Plane Node
-
-                      |
-
-        ------------------------------
-
-        |                            |
-
-        v                            v
-
-
-   Worker Node                 Worker Node
-
-```
 
 
 The control plane manages:
@@ -217,33 +198,6 @@ Worker nodes run:
 
 
 The project deploys a three-tier application architecture.
-
-
-Architecture:
-
-
-```
-                Client
-
-                  |
-
-                  |
-
-             Application Layer
-
-                  |
-
-                  |
-
-        Spring Boot Backend API
-
-                  |
-
-                  |
-
-             MySQL Database
-
-```
 
 
 Components:
